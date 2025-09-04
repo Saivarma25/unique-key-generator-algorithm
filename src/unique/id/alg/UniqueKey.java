@@ -1,13 +1,17 @@
 package unique.id.alg;
 
+import unique.id.hashing.Hashing;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
 import java.util.UUID;
 
+/**
+ * Generator 1,
+ * which combines host details, process id, current time and UUID for uniqueness
+ *
+ * @author Saivarma Akarapu
+ */
 public class UniqueKey {
 
     private static final String HOST_NAME;
@@ -24,23 +28,16 @@ public class UniqueKey {
     }
 
     private UniqueKey() {
-        // private constructor
+        // private constructor, to prevent object creation
     }
 
-    public static String getUniqueKey() {
-        return getHashWithSHA256(String.format("%s-%d-%d-%s",
+    /**
+     * Method that generates unique alphanumeric key/id
+     * @return String which is hashed value of host, pid, time and UUID
+     */
+    public static String getUniqueAlphaNumericKey() {
+        return Hashing.getHashWithSHA256(String.format("%s-%d-%d-%s",
                 HOST_NAME, PID, System.currentTimeMillis(), UUID.randomUUID()));
-    }
-
-    private static String getHashWithSHA256(String input) {
-        try {
-            // Create a MessageDigest instance for SHA-256
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            // Perform the hashing & Convert bytes to hex format
-            return HexFormat.of().formatHex(digest.digest(input.getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
